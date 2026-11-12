@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>流程管控台 Gatekeeper · AI 参与的软件开发流程</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="top">
+  <div class="brand">流程管控台 <span>Gatekeeper</span></div>
+  <div class="ver">v1.0 · 门禁制开发流程</div>
+  <div class="crumb" id="crumb">总览</div>
+  <div class="spacer"></div>
+  <span class="ctl">数据管理（非流程动作）</span>
+  <button class="ghost" data-act="store-settings">内容存储</button>
+  <button class="ghost" data-act="export-data">导出备份</button>
+  <button class="ghost" data-act="import-data">导入备份</button>
+  <button class="ghost" id="backBtn" data-act="back" style="display:none">← 返回</button>
+  <button class="ghost" data-act="reset">重置数据</button>
+  <input type="file" id="importFile" accept="application/json,.json" style="display:none">
+</div>
+<div class="rolestrip" id="rolestrip">
+  <button data-view="human">人 · 工作台（可操作）</button>
+  <button data-view="ai">AI 执行观测（只读）</button>
+  <button data-view="toolchain">工具链观测（只读）</button>
+  <span class="rs-tip">系统只给人使用；人的一次判断（批准 / 打回 / Review / 裁决）即授权后续执行，AI 与工具链自动完成，过程与日志在观测区查看</span>
+</div>
+<div class="boundary">
+  <span><b>系统只管七件事</b> <span class="six">状态 · 引用 · 证据 · 审批 · 记忆 · 度量 · 编排</span></span>
+  <span class="no"><b>不存内容本体</b>：文档 / 产物 / 上下文 / 凭证经存储插件写入外部（文件目录 / Git / 日志仓库），状态里只有 {uri, hash} 引用；代码归 Git、日志归日志仓库</span>
+</div>
+<div class="layout">
+  <div class="side" id="side">
+    <div class="ws-title" id="ws-title"></div>
+    <div class="duty" id="duty"></div>
+    <h4>本区页面</h4>
+    <div class="nav" id="nav"></div>
+    <h4>G0–G10 流程进度</h4>
+    <div class="phase-list" id="side-phases"></div>
+  </div>
+  <div class="main" id="main"></div>
+</div>
+<div class="toast" id="toast"></div>
+<div class="modal-mask" id="modal" style="display:none"><div class="modal" id="modal-box"></div></div>
+<script src="js/storage.js"></script>
+<script src="js/logic.js"></script>
+<script src="js/ui.js"></script>
+</body>
+</html>
