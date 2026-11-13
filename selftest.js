@@ -356,7 +356,7 @@ console.log('\n--- E2. 打回后自动重跑 G10 不产生重复候选记忆 ---
 
 console.log('\n--- F. 闭环后新建下一轮任务（不是重置当前任务）+ 经验回流 ---');
 // 核心语义：下一轮是**一个新任务实例**，源任务原样留档。
-// 《输出文档》2.1「项目记忆持久化，跨任务复用」—— 记忆跨任务，载体也该跨任务。
+// 《AI开发流程设计》2.1「项目记忆持久化，跨任务复用」—— 记忆跨任务，载体也该跨任务。
 const active = L.activeMemory(s).length;
 const srcSnapshot = JSON.stringify(s);
 const rootF = { version:2, nextId:9001, instances:[], activeId:null };
@@ -707,7 +707,7 @@ fire({act:'open',id:closedSrc});
 fire({tab:'memory'});
 const mh=els['main']._html;
 ok(mh.indexOf('开启下一轮 = 新建一个任务，不是把当前任务重置重跑')>=0, '记忆确认页写明「新建任务」而非「重置当前任务」');
-ok(mh.indexOf('《输出文档》2.1「项目记忆持久化，跨任务复用」')>=0, '给出文档依据（记忆跨任务复用）');
+ok(mh.indexOf('《AI开发流程设计》2.1「项目记忆持久化，跨任务复用」')>=0, '给出文档依据（记忆跨任务复用）');
 ok(mh.indexOf('data-act="next-round"')>=0, '提供「新建下一轮任务」动作入口');
 ok(mh.indexOf('id="next-task-name"')>=0, '可填写新任务名称');
 fire({act:'next-round'});

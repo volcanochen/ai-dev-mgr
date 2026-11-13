@@ -216,7 +216,7 @@
     const p=LOGIC.cur(S),c=LOGIC.autoCheck(S),nx=LOGIC.PHASES[S.phaseIdx+1]||null;
     const steps=nx?LOGIC.previewNextRun(S):[];
     let h='<div class="card"><h3>执行授权单 · 批准前请确认'+ro()+'</h3>'+
-      '<p class="sub">依据《输出文档》2.3 各阶段「AI 职责 / 产出物 / 门禁」。<b>批准放行 = 确认本阶段达标 + 授权下一阶段自动执行</b>，不再需要单独点触发。</p><div class="grid2">';
+      '<p class="sub">依据《AI开发流程设计》2.3 各阶段「AI 职责 / 产出物 / 门禁」。<b>批准放行 = 确认本阶段达标 + 授权下一阶段自动执行</b>，不再需要单独点触发。</p><div class="grid2">';
     h+='<div class="authbox"><div class="row" style="justify-content:space-between"><b>'+p.id+' '+esc(p.name)+' · 本阶段</b>'+
       '<span class="badge '+(c.passed?'green':'amber')+'">'+(c.passed?'校验通过':'未达标')+'</span></div>'+
       '<div class="authsec">AI 与工具链做了什么（已执行）</div>'+todoList(p.todo,true)+
@@ -349,8 +349,8 @@
   }
   /* 产出物名称词典：界面任何地方出现「PRD / Plan / Diff …」这类**产出物名**，
      只要该阶段确实已产出对应文件，就渲染成可跳到模拟文件的链接；没有文件则保持纯文本，不给死链。
-     口径：只收录《输出文档》2.3 各阶段「产出物」栏里的产物名。
-     「验收标准」不是独立产物——它是 PRD 内的内容（《输出文档》G1 产出物 =「结构化 PRD（含验收标准）」），
+     口径：只收录《AI开发流程设计》2.3 各阶段「产出物」栏里的产物名。
+     「验收标准」不是独立产物——它是 PRD 内的内容（《AI开发流程设计》G1 产出物 =「结构化 PRD（含验收标准）」），
      故不建链接；「任务拆解」是 G3 阶段名，其产出物为 Task 清单（Task-Breakdown.md），保留跳转。 */
   const FILE_TERMS=[
     {term:'Context Brief',phase:'G0'},{term:'上下文摘要',phase:'G0'},
@@ -444,7 +444,7 @@
     h+='<div class="sect">⑤ 输入了什么 · 逐条可查</div>';
     r.inputs.forEach(i=>{
       h+='<div style="margin:9px 0 4px"><b>'+linkify(i.label)+'</b> <span class="mono">'+esc(i.kind)+' · 来源 '+esc(i.source)+' · '+i.count+' 条</span></div>';
-      if(i.categories) h+='<p class="hint">分类口径（《输出文档》2.3 G0）：'+i.categories.map(c=>esc(c.name)+' '+c.loaded+' 条（'+esc(c.note)+'）').join('；')+'</p>';
+      if(i.categories) h+='<p class="hint">分类口径（《AI开发流程设计》2.3 G0）：'+i.categories.map(c=>esc(c.name)+' '+c.loaded+' 条（'+esc(c.note)+'）').join('；')+'</p>';
       if(i.selector) h+='<p class="hint">过滤 '+esc(i.selector)+' · 排序 '+esc(i.orderBy||'—')+' · 注入 '+esc(i.injectedInto||'—')+'</p>';
       if(i.kind==='phase_def'&&i.items.length&&i.items[0]&&i.items[0].ai)
         h+='<p class="hint">本阶段产出物：'+linkify(i.items[0].ai)+' ｜ 机器证据：'+linkify(i.items[0].ev)+' ｜ 门禁判据：'+linkify(i.items[0].gate)+'</p>';
@@ -756,7 +756,7 @@
     h+='<div class="card"><h3>我的动作 · 开启下一轮</h3><p class="sub"><b>开启下一轮 = 新建一个任务，不是把当前任务重置重跑。</b>'+
       '本任务（'+esc(S.parentTaskId?('派生自 '+S.parentTaskId):'当前任务')+'）的状态、工件、证据、审批与全部执行凭证保持原样留档，可随时回查；'+
       '系统会新建一个<b>独立的新任务</b>，把本任务已入库的 <b>'+carried+'</b> 条生效项目记忆继承过去，新任务从 G0 重新开始。'+
-      '依据《输出文档》2.1「项目记忆持久化，跨任务复用」。</p>'+
+      '依据《AI开发流程设计》2.1「项目记忆持久化，跨任务复用」。</p>'+
       '<div class="row" style="margin:10px 0"><input id="next-task-name" placeholder="新任务名称（默认：'+esc(S.round+1)+' 轮）" style="max-width:420px"></div>'+
       '<div class="actions"><button class="primary" data-act="next-round">新建下一轮任务</button>'+
       (S.finishedAt?'':'<span class="why-dis">建议先跑完本轮 G0–G10 再开下一轮</span>')+'</div></div>';

@@ -5,7 +5,7 @@
    多实例：createSeedRoot 用同一套流程逻辑真实推进出多个开发任务，不写死状态
    ============================================================ */
 const LOGIC = (() => {
-  /* todo / criteria 逐条摘自《输出文档》2.3 各阶段的「AI 职责 / 产出物 / 门禁」，
+  /* todo / criteria 逐条摘自《AI开发流程设计》2.3 各阶段的「AI 职责 / 产出物 / 门禁」，
      用于生成执行授权单：批准前让人知道下一阶段要做什么、按什么标准才算通过 */
   const PHASES = [
     {id:'G0', name:'上下文准备', seg:'准备', gate:'人确认上下文摘要', ai:'Context Brief 上下文摘要', ev:'代码库索引快照',
@@ -47,7 +47,7 @@ const LOGIC = (() => {
     {id:'AC-02', text:'验证码错误时拒绝登录', testable:'提交错误验证码返回 401，且不产生会话记录'},
     {id:'AC-03', text:'同一验证码不可重复使用', testable:'二次提交同一验证码返回 409，首次会话保持有效'},
   ];
-  /* Task 清单：每个 Task 粒度 = 可独立验证（《输出文档》2.3 G3），并显式标注依赖关系。
+  /* Task 清单：每个 Task 粒度 = 可独立验证（《AI开发流程设计》2.3 G3），并显式标注依赖关系。
      deps 声明「必须等哪些 Task 被人 Review 通过后才能开工」的前置依赖。
      同批并发的判据：依赖已满足 + 文件范围互不重叠（否则 Diff 会互相污染）。 */
   const TASK_TEMPLATE = [
@@ -72,7 +72,7 @@ const LOGIC = (() => {
       duty:'按执行计划移交步骤 / 检出越界并升级人裁决',
       simulated:false, note:'本系统内部编排动作，不属于外部执行者'},
   };
-  /* 《输出文档》2.3 G0：项目记忆 = 约束、编码规范、历史教训 */
+  /* 《AI开发流程设计》2.3 G0：项目记忆 = 约束、编码规范、历史教训 */
   const MEMORY_CATEGORIES = ['约束','编码规范','历史教训'];
   /* 模拟文件：用于演示「人打开 PRD 阅读后再签门禁」的评审动作，不落真实仓库 */
   const FILE_META = {
@@ -190,7 +190,7 @@ const LOGIC = (() => {
   function currentTask(s){ return s.tasks[s.taskIdx] || null; }
 
   /* ---- G4 内层循环：依赖图 + 批次并发 + 独立评审 ----
-     依据《输出文档》2.3 G3「每个 Task 粒度 = 可独立验证；标注依赖关系」与 G4「Review 每个 Task 的 Diff」。
+     依据《AI开发流程设计》2.3 G3「每个 Task 粒度 = 可独立验证；标注依赖关系」与 G4「Review 每个 Task 的 Diff」。
      并发判据（两条同时成立才可同批并行）：
        ① 依赖已满足：t.deps 里的前置 Task 都已被 Review 通过；
        ② 文件范围不重叠：scope / diff 没有公共文件，否则两个 Task 的 Diff 会互相污染，越界检测也无法归属。
@@ -748,7 +748,7 @@ const LOGIC = (() => {
     const inputs=[inp('phase_def','阶段定义（本步骤的依据）','LOGIC.PHASES['+s.phaseIdx+']',
       [{id:p.id,name:p.name,gate:p.gate,ai:p.ai,ev:p.ev,todo:p.todo,criteria:p.criteria}])];
     const generic={tool:(ACTORS[st.actor]||ACTORS.system).runtime, operation:st.step,
-      params:{阶段:pid, 本轮:s.round}, basis:'《输出文档》2.3 各阶段 AI 职责 / 产出物 / 门禁'};
+      params:{阶段:pid, 本轮:s.round}, basis:'《AI开发流程设计》2.3 各阶段 AI 职责 / 产出物 / 门禁'};
     let method=generic, note='';
 
     if(st.step==='加载上下文'||st.step==='分析 Task'){
@@ -766,7 +766,7 @@ const LOGIC = (() => {
         injectedInto:'Context Brief.已加载项目记忆',
         params:{阶段:pid, 本轮:s.round, 生效条目数:mem.length, 分类口径:MEMORY_CATEGORIES,
           同时读取:['S.acs[]','S.plan.files','S.tasks[]','LOGIC.PHASES['+s.phaseIdx+']']},
-        basis:'《输出文档》2.3 G0「AI 加载项目记忆（约束、编码规范、历史教训）；检索相关代码与文档」'};
+        basis:'《AI开发流程设计》2.3 G0「AI 加载项目记忆（约束、编码规范、历史教训）；检索相关代码与文档」'};
       note='项目记忆按文档分三类；本原型只真实承载「历史教训」（打回与复盘回流），其余两类需接项目基线，故如实显示为 0 条。';
     }else if(st.step==='检索代码库'){
       const brief=s.artifacts.find(a=>a.phase==='G0'&&a.kind==='ai');
@@ -778,7 +778,7 @@ const LOGIC = (() => {
         [{既有约定:briefData.既有约定,风险点:briefData.风险点}]));
       method={tool:'代码库索引检索（演示模拟适配器）',operation:'按阶段范围检索相关文件与既有约定',
         params:{索引版本:'idx-'+hash('G0'+s.round), 命中文件数:loc.length, 阶段:pid},
-        basis:'《输出文档》2.3 G0「检索相关代码与文档」'};
+        basis:'《AI开发流程设计》2.3 G0「检索相关代码与文档」'};
     }else if(st.step==='生成结构化产出'||st.step==='自我检查'){
       inputs.push(inp('target_artifact','本阶段应产出','LOGIC.PHASES['+s.phaseIdx+']',[{type:p.ai,标准:p.criteria}]));
       const prev=s.phaseIdx>0?artOf(PHASES[s.phaseIdx-1].id):[];
@@ -787,7 +787,7 @@ const LOGIC = (() => {
       method={tool:(ACTORS.ai.runtime)+' · 结构化产出生成器',
         operation:st.step==='自我检查'?'对照 AC 逐条自查并附自报声明（系统不采信）':'按阶段定义生成结构化文档并登记模拟文件',
         params:{阶段:pid, 输出类型:p.ai, 上游工件数:prev.length},
-        basis:'《输出文档》2.3 各阶段「AI 职责 / 产出物」'};
+        basis:'《AI开发流程设计》2.3 各阶段「AI 职责 / 产出物」'};
       if(st.step==='自我检查') note='AI 自报「已自测全绿」不构成证据，仅作提示；门禁只认工具链签名证据。';
     }else if(st.step==='执行机器验证'||st.step==='签名回传证据'){
       inputs.push(inp('verification_scope','机器验证范围','LOGIC.PHASES['+s.phaseIdx+']',[{证据类型:p.ev,判据:p.criteria}]));
@@ -797,12 +797,12 @@ const LOGIC = (() => {
       method={tool:'ci-runner-01（演示模拟适配器）',
         operation:st.step==='签名回传证据'?'对验证结果签名，绑定 commit / diff hash 并回传':'运行测试 / 静态检查 / 覆盖率 / 一致性扫描',
         params:{阶段:pid, 签名者:'ci-runner-01', 绑定字段:['commitHash','diffHash','result']},
-        basis:'《输出文档》2.5「AI 自报不算证据，工具链签名并绑定提交」'};
+        basis:'《AI开发流程设计》2.5「AI 自报不算证据，工具链签名并绑定提交」'};
     }else if(st.step==='先写测试'){
       if(t) inputs.push(inp('task','当前 Task（测试依据）','S.tasks[id='+t.id+']',
         [{id:t.id,title:t.title,verify:t.verify,acs:t.acs,scope:t.scope,dependsOn:t.deps||[]}]));
       method={tool:(ACTORS.ai.runtime)+' · 测试生成器',operation:'先写测试并对齐 AC，等待工具链回传「红」',
-        params:{TDD阶段:'红前', Task:t?t.id:null},basis:'《输出文档》2.5 TDD 纪律：先写测试，预期失败'};
+        params:{TDD阶段:'红前', Task:t?t.id:null},basis:'《AI开发流程设计》2.5 TDD 纪律：先写测试，预期失败'};
     }else if(st.step==='写实现并提交 Diff'||st.step==='按意见修订实现'){
       if(t) inputs.push(inp('task_files','Task 文件范围与本次 Diff','S.tasks[id='+t.id+']',
         [{id:t.id,计划内文件:t.scope,改动文件:t.diff,越界文件:t.diff.filter(f=>t.scope.indexOf(f)<0)}]));
@@ -811,7 +811,7 @@ const LOGIC = (() => {
       const red=s.evidences.filter(e=>e.taskId===(t?t.id:'')&&e.type==='verify_red');
       if(red.length) inputs.push(inp('red_evidence','前置「红」阶段证据','S.evidences[]',red.map(e=>({id:e.id,result:e.result}))));
       method={tool:(ACTORS.ai.runtime)+' · 实现生成器',operation:'依据测试与反馈生成实现代码，输出 Diff + 变更说明',
-        params:{Task:t?t.id:null, 改动文件数:t?t.diff.length:0},basis:'《输出文档》2.3 G4「先写测试 → 再写实现」'};
+        params:{Task:t?t.id:null, 改动文件数:t?t.diff.length:0},basis:'《AI开发流程设计》2.3 G4「先写测试 → 再写实现」'};
     }else if(st.step==='执行测试（红）'||st.step==='单测 + Lint（绿）'){
       const tst=s.artifacts.filter(a=>a.phase==='G4'&&a.type==='test_code'&&(!t||a.title.indexOf(t.id)===0));
       inputs.push(inp('test_code','待执行测试代码','S.artifacts[]',tst.map(a=>({id:a.id,title:a.title,hash:a.hash}))));
@@ -819,7 +819,7 @@ const LOGIC = (() => {
         ctx.newEvs.map(e=>({id:e.id,result:e.result,data:evData(e)}))));
       method={tool:'ci-runner-01（演示模拟适配器）',operation:'执行单测与 Lint 并签名回传结果',
         params:{TDD阶段:st.step.indexOf('红')>=0?'红（预期失败）':'绿（全绿）', Task:t?t.id:null},
-        basis:'《输出文档》2.5 红绿测试证据由工具链产生'};
+        basis:'《AI开发流程设计》2.5 红绿测试证据由工具链产生'};
     }else if(st.step==='越界改动检测'){
       if(t){
         const out=t.diff.filter(f=>t.scope.indexOf(f)<0);
@@ -829,7 +829,7 @@ const LOGIC = (() => {
       if(ctx.newEvs.length) inputs.push(inp('oos_result','越界检测结果','S.evidences[]（本步新建）',
         ctx.newEvs.map(e=>({id:e.id,result:e.result,data:evData(e)}))));
       method={tool:'ci-runner-01 · 越界检测器（演示模拟适配器）',operation:'比对改动文件集与计划清单，命中则要求人说明',
-        params:{Task:t?t.id:null},basis:'《输出文档》2.5 越界检测'};
+        params:{Task:t?t.id:null},basis:'《AI开发流程设计》2.5 越界检测'};
     }else if(st.step==='移交工具链'||st.step==='检出越界改动'||st.step==='整理变更说明'){
       inputs.push(inp('handoff','移交 / 汇总所依据的当前状态','S',
         [{阶段:pid, 本阶段工件数:artOf(pid).length, 本阶段证据数:evOf(pid).length,
@@ -927,7 +927,7 @@ const LOGIC = (() => {
   }
 
   /* ---- 闭环后开启下一轮 = 新建一个任务，而不是把当前任务重置 ----
-     《输出文档》2.1：「项目记忆（约束、偏好、历史教训）持久化，跨任务复用」。
+     《AI开发流程设计》2.1：「项目记忆（约束、偏好、历史教训）持久化，跨任务复用」。
      记忆跨任务复用 ⇒ 载体也该跨任务。所以下一轮是**一个新任务实例**（新 ID、
      独立的状态/工件/证据/审批/事件），把已确认入库的生效记忆继承过去；
      原任务保持「已闭环」原样不动，历史工件与审计轨迹完整保留、可随时回查。
